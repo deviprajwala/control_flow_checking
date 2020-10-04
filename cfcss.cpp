@@ -105,22 +105,34 @@ void diagraph(struct node *root)
 void compute_signature(struct node *root)
 {
   stack<struct node*>s;
+  vector<int>v(100);
   s.push(root);
   while(!s.empty())
   {
     struct node* x=s.top();
     int lcount=x->links;
+    v.push_back(x->val);
     s.pop();
     if(x->s==0)
     {
       x->g=x->parent->g^x->d;
       x->s=x->g;
     }
-    int idx=0;
+    int idx=lcount-1;
     while(lcount!=0)
     {
+      if(find(v.begin(),v.end(),(x->link[idx]->val))!=v.end())
+      {
+         cout<<x->link[idx]->parent->val;
+         cout<<x->val;
+         x->D=x->s^x->link[idx]->parent->s;
+         x->link[idx]->parent->D=x->s^x->link[idx]->parent->s;
+       /*  cout<<x->s<<" "<<x->val;
+         cout<<x->link[idx]->parent->s<<" "<<x->link[idx]->parent->val;
+         cout<<x->link[idx]->parent->D;*/
+      }
       s.push(x->link[idx]);
-      idx++;
+      idx--;
       lcount--;
     }
   }
