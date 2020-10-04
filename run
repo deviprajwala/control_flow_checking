@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "DATE: " `date`
+#to display the date at which the script was run
+
+g++ -o cfcss cfcss.cpp
+#command to compile the cpp prgram
+
+./cfcss<in.txt
+#to run the cpp program
