@@ -30,7 +30,7 @@ struct node* getnode(int num,struct node* par)
  x->val=num;
  x->parent=par;
  x->s=0;
- x->d=0;
+ x->d=num;
  x->D=0;
 }
 void print(vector<vector<int> >matrix)
@@ -88,7 +88,8 @@ void diagraph(struct node *root)
   while(!s.empty())
   {
    struct node* x=s.top();
-   cout<<x->val<<"[ shape = rectangle ]\n";
+   cout<<x->val<<"[ shape = record label=\""<<x->val<<"|s="<<x->s<<"|d="<<x->d<<"|g="<<x->g;
+   cout<<"|D="<<x->D<<"\"]\n";
    s.pop();
    int id=0;
    while(x->links!=0)
@@ -100,6 +101,29 @@ void diagraph(struct node *root)
    }
   }  
   cout<<"}";
+}
+void compute_signature(struct node *root)
+{
+  stack<struct node*>s;
+  s.push(root);
+  while(!s.empty())
+  {
+    struct node* x=s.top();
+    int lcount=x->links;
+    s.pop();
+    if(x->s==0)
+    {
+      x->g=x->parent->g^x->d;
+      x->s=x->g;
+    }
+    int idx=0;
+    while(lcount!=0)
+    {
+      s.push(x->link[idx]);
+      idx++;
+      lcount--;
+    }
+  }
 }
 int main()
 {
@@ -136,7 +160,7 @@ int main()
   cout<<root->link[0]->val<<" "<<root->link[1]->val<<"\n";
   cout<<root->link[0]->link[0]->val<<" "<<root->link[0]->link[1]->val<<root->link[1]->link[0]->val<<"\n";
   cout<<root->link[0]->link[0]->link[0]->val;*/
- 
+  compute_signature(root);
   diagraph(root); 
   
   return 0;
