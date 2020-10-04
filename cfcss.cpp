@@ -60,24 +60,45 @@ int count(int num,vector<vector<int> > matrix,struct node* cur)
    return cnt;
 }
 void generate_graph(vector<vector<int> >matrix)
-//to generate the signatures of each block in the control flow graph
+//to generates the control flow graph
 {
   while(!s.empty())
   {
    struct node* cur=s.top();
-   int idx=0;
+   int idx=0,link_count=cur->links;
    s.pop();
-   while(cur->links!=0)
+   while(link_count!=0)
    {
      struct node* x=cur->link[idx];
      s.push(x);
      x->d=x->val;
      x->links=count(x->val,matrix,x);
-     cur->links-=1;
+     link_count-=1;
      idx++;
    }
   }
   return;
+}
+void diagraph(struct node *root)
+{
+  stack <struct node* >s;
+  s.push(root);
+  
+  cout<<"digraph G{\n";
+  while(!s.empty())
+  {
+   struct node* x=s.top();
+   s.pop();
+   int id=0;
+   while(x->links!=0)
+   {
+     s.push(x->link[id]);
+     cout<<x->val<<"->"<<x->link[id]->val<<"\n";
+     x->links-=1;
+     id++;
+   }
+  }  
+  cout<<"}";
 }
 int main()
 {
@@ -110,6 +131,12 @@ int main()
  
   s.push(root);
   generate_graph(matrix);
-  cout<<root->val;
+/*  cout<<root->val<<"\n";
+  cout<<root->link[0]->val<<" "<<root->link[1]->val<<"\n";
+  cout<<root->link[0]->link[0]->val<<" "<<root->link[0]->link[1]->val<<root->link[1]->link[0]->val<<"\n";
+  cout<<root->link[0]->link[0]->link[0]->val;*/
+ 
+  diagraph(root); 
+  
   return 0;
 }
