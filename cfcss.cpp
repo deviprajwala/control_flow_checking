@@ -88,6 +88,7 @@ void diagraph(struct node *root)
   while(!s.empty())
   {
    struct node* x=s.top();
+   cout<<x->val<<"[ shape = rectangle ]\n";
    s.pop();
    int id=0;
    while(x->links!=0)
