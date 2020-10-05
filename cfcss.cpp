@@ -23,13 +23,19 @@ struct node
 stack<struct node*> s;
 //to traverse the control flow graph in depth first search fashion
 
-struct node* getnode(int num,struct node* par)
+map<int,int>mp;
+//to store parent and child
+
+vector<pair<int,int> >diamond;
+//to track nodes in which D should be changed
+
+struct node* getnode(int num,struct node* cur)
 //function to get a new node whose information is set as per the requirement
 {
  struct node* x=new struct node();
  x->val=num;
- x->parent=par;
  x->s=0;
+ x->parent=cur;
  x->d=num;
  x->D=0;
 }
@@ -53,6 +59,11 @@ int count(int num,vector<vector<int> > matrix,struct node* cur)
       if(matrix[num][i]==1)
       {
         struct node* x=getnode(i,cur);
+        if(mp.find(i)!=mp.end())
+        {
+          diamond.push_back(make_pair(mp[i],cur->val));
+        }
+        mp[i]=cur->val;
         cur->link[cnt]=x;
         cnt++;
       }
@@ -102,7 +113,38 @@ void diagraph(struct node *root)
   }  
   cout<<"}";
 }
-void compute_signature(struct node *root)
+struct node* update_d(int val1,struct node* root)
+{
+  int value;
+  for(int i=0;i<diamond.size();i++)
+  {
+    if(diamond[i].second==val1)
+    {
+      value=diamond[i].first;
+    }
+  }
+ //to find the node with value val
+ s.push(root);
+ while(!s.empty())
+  {
+   struct node* x=s.top();
+   if(x->val==value)
+   {
+    return x;
+   }
+   int lcount=x->links;
+   s.pop();
+   int id=0;
+   while(lcount!=0)
+   {
+     s.push(x->link[id]);
+     lcount-=1;
+     id++;
+   }
+  } 
+  return NULL; 
+}
+struct node* compute_signature(struct node *root)
 {
   stack<struct node*>s;
   vector<int>v(100);
@@ -123,19 +165,21 @@ void compute_signature(struct node *root)
     {
       if(find(v.begin(),v.end(),(x->link[idx]->val))!=v.end())
       {
-         cout<<x->link[idx]->parent->val;
-         cout<<x->val;
-         x->D=x->s^x->link[idx]->parent->s;
-         x->link[idx]->parent->D=x->s^x->link[idx]->parent->s;
-       /*  cout<<x->s<<" "<<x->val;
-         cout<<x->link[idx]->parent->s<<" "<<x->link[idx]->parent->val;
-         cout<<x->link[idx]->parent->D;*/
+        //if a visited node is pushed to stack again then there must be a cycle
+        struct node*y=update_d(x->val,root);
+        if(y!=NULL)
+        {
+         y->D=0;
+         x->D=x->s^y->s;
+         x->link[idx]->g=x->link[idx]->g^y->D;
+        }
       }
       s.push(x->link[idx]);
       idx--;
       lcount--;
     }
   }
+  return root;
 }
 int main()
 {
@@ -172,8 +216,8 @@ int main()
   cout<<root->link[0]->val<<" "<<root->link[1]->val<<"\n";
   cout<<root->link[0]->link[0]->val<<" "<<root->link[0]->link[1]->val<<root->link[1]->link[0]->val<<"\n";
   cout<<root->link[0]->link[0]->link[0]->val;*/
-  compute_signature(root);
+  root=compute_signature(root);
   diagraph(root); 
-  
+ 
   return 0;
 }
