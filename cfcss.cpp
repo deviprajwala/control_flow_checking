@@ -80,7 +80,10 @@ void generate_graph(vector<vector<int> >matrix)
    s.pop();
    while(link_count!=0)
    {
+
      struct node* x=cur->link[idx];
+     
+
      s.push(x);
      x->d=x->val;
      x->links=count(x->val,matrix,x);
@@ -196,7 +199,8 @@ int main()
   {
     int node1,node2;
     cin>>node1>>node2;
-
+    if(node1==node2)continue;
+    if(node1>node2) continue;
     matrix[node1][node2]=1;
   }
  // print(matrix);
