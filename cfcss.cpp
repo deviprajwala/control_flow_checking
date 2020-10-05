@@ -97,7 +97,7 @@ void diagraph(struct node *root)
 {
   stack <struct node* >s;
   s.push(root);
-  
+  map<int,int>check;
   cout<<"digraph G{\n";
   while(!s.empty())
   {
@@ -109,7 +109,11 @@ void diagraph(struct node *root)
    while(x->links!=0)
    {
      s.push(x->link[id]);
-     cout<<x->val<<"->"<<x->link[id]->val<<"\n";
+     if(check.find(x->val)==check.end()||check[x->val]!=x->link[id]->val)
+     {
+       check[x->val]=x->link[id]->val;
+       cout<<x->val<<"->"<<x->link[id]->val<<"\n";
+     }
      x->links-=1;
      id++;
    }
