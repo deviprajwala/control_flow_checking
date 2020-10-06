@@ -1,10 +1,14 @@
 #!/bin/bash
 
-echo "DATE: " `date`
+echo "DATE: " `date`>>log.txt
 #to display the date at which the script was run
 
 g++ -o cfcss cfcss.cpp
 #command to compile the cpp prgram
 
-./cfcss<in.txt
-#to run the cpp program
+./cfcss<in.txt >diagram.txt
+#to run the cpp program by redirecting the input and output files
+
+dot -Tpng diagram.txt -o diag.png
+#to generate the graph diagram
+
